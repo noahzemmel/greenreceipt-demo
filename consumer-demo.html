@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenReceipt - Your Digital Receipt Hub</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .change {
+            font-size: 0.9rem;
+            color: #4CAF50;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            height: 300px;
+        }
+
+        .chart-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .chart-card canvas {
+            max-height: 200px !important;
+        }
+
+        .receipts-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .receipts-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .receipts-header h3 {
+            color: #333;
+            font-size: 1.3rem;
+        }
+
+        .search-box {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            width: 300px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box:focus {
+            border-color: #4CAF50;
+        }
+
+        .receipts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .receipt-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #4CAF50;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .receipt-card:hover {
+            background: #e8f5e8;
+            transform: translateX(5px);
+        }
+
+        .receipt-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .merchant-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .receipt-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .receipt-amount {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+
+        .receipt-category {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .category-groceries { background: #4CAF50; }
+        .category-restaurants { background: #FF9800; }
+        .category-shopping { background: #9C27B0; }
+        .category-transport { background: #2196F3; }
+        .category-utilities { background: #607D8B; }
+
+        .insights-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .insight-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #4CAF50;
+        }
+
+        .insight-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .insight-card p {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .insight-action {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .insight-action:hover {
+            transform: translateY(-2px);
+        }
+
+        .floating-action {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .floating-action:hover {
+            transform: translateY(-3px);
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box {
+                width: 100%;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 GreenReceipt</h1>
+            <p>Your digital receipt hub - track spending, reduce waste, gain insights</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Spent This Month</h3>
+                <div class="value">£847.32</div>
+                <div class="change">+12% from last month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Receipts Collected</h3>
+                <div class="value">47</div>
+                <div class="change">+8 this week</div>
+            </div>
+            <div class="stat-card">
+                <h3>Average Receipt</h3>
+                <div class="value">£18.03</div>
+                <div class="change">-5% from last month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Top Category</h3>
+                <div class="value">Groceries</div>
+                <div class="change">35% of spending</div>
+            </div>
+            <div class="stat-card">
+                <h3>Paper Saved</h3>
+                <div class="value">47</div>
+                <div class="change">receipts this month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Carbon Saved</h3>
+                <div class="value">0.5kg</div>
+                <div class="change">CO₂ this month</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>Spending by Category</h3>
+                <canvas id="categoryChart" width="400" height="300"></canvas>
+            </div>
+            <div class="chart-card">
+                <h3>Monthly Trend</h3>
+                <canvas id="trendChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+
+        <div class="receipts-section">
+            <div class="receipts-header">
+                <h3>Recent Receipts</h3>
+                <input type="text" class="search-box" placeholder="Search receipts..." id="searchInput">
+            </div>
+            <div class="receipts-grid" id="receiptsGrid">
+                <!-- Receipts will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <div class="insights-section">
+            <h3>💡 Spending Insights</h3>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <h4>🍎 Grocery Spending</h4>
+                    <p>You spend 35% of your budget on groceries. Consider meal planning to reduce food waste and save money.</p>
+                    <div class="insight-action">💡 Try the 7-day meal plan</div>
+                </div>
+                <div class="insight-card">
+                    <h4>☕ Coffee Habits</h4>
+                    <p>You've spent £47 on coffee this month. That's about £1.50 per day - consider brewing at home to save.</p>
+                    <div class="insight-action">💰 Potential monthly savings: £30</div>
+                </div>
+                <div class="insight-card">
+                    <h4>🌱 Eco Impact</h4>
+                    <p>You've saved 47 paper receipts this month! That's equivalent to saving 0.5kg of paper and reducing your carbon footprint.</p>
+                    <div class="insight-action">🌍 Keep up the great work!</div>
+                </div>
+                <div class="insight-card">
+                    <h4>🎯 Budget Alert</h4>
+                    <p>You're 15% over your monthly budget. Consider reducing dining out expenses to get back on track.</p>
+                    <div class="insight-action">⚠️ Set spending alerts</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="floating-action" onclick="simulateScan()">
+        📱 Scan Receipt
+    </button>
+
+    <script>
+        // Sample receipt data
+        const sampleReceipts = [
+            {
+                id: 1,
+                merchant: "Tesco",
+                date: "2024-01-15",
+                amount: 23.45,
+                category: "groceries",
+                items: ["Organic Bananas", "Wholemeal Bread", "Milk"]
+            },
+            {
+                id: 2,
+                merchant: "Pret A Manger",
+                date: "2024-01-15",
+                amount: 8.50,
+                category: "restaurants",
+                items: ["Chicken Caesar Wrap", "Cappuccino"]
+            },
+            {
+                id: 3,
+                merchant: "Amazon",
+                date: "2024-01-14",
+                amount: 45.99,
+                category: "shopping",
+                items: ["Wireless Headphones", "Phone Case"]
+            },
+            {
+                id: 4,
+                merchant: "Shell",
+                date: "2024-01-14",
+                amount: 52.30,
+                category: "transport",
+                items: ["Petrol", "Car Wash"]
+            },
+            {
+                id: 5,
+                merchant: "Sainsbury's",
+                date: "2024-01-13",
+                amount: 67.89,
+                category: "groceries",
+                items: ["Weekly Shop", "Wine", "Cheese"]
+            },
+            {
+                id: 6,
+                merchant: "Starbucks",
+                date: "2024-01-13",
+                amount: 4.75,
+                category: "restaurants",
+                items: ["Latte", "Muffin"]
+            },
+            {
+                id: 7,
+                merchant: "Uber",
+                date: "2024-01-12",
+                amount: 12.50,
+                category: "transport",
+                items: ["Ride to City Centre"]
+            },
+            {
+                id: 8,
+                merchant: "H&M",
+                date: "2024-01-12",
+                amount: 34.99,
+                category: "shopping",
+                items: ["T-Shirt", "Jeans"]
+            }
+        ];
+
+        // Initialize charts
+        function initCharts() {
+            // Wait for Chart.js to be fully loaded
+            if (typeof Chart === 'undefined') {
+                setTimeout(initCharts, 100);
+                return;
+            }
+
+            // Category spending chart
+            const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(categoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Groceries', 'Restaurants', 'Shopping', 'Transport', 'Utilities'],
+                    datasets: [{
+                        data: [35, 25, 20, 15, 5],
+                        backgroundColor: [
+                            '#4CAF50',
+                            '#FF9800',
+                            '#9C27B0',
+                            '#2196F3',
+                            '#607D8B'
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        animateRotate: true,
+                        animateScale: true,
+                        duration: 1000
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Monthly trend chart
+            const trendCtx = document.getElementById('trendChart').getContext('2d');
+            new Chart(trendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Oct', 'Nov', 'Dec', 'Jan'],
+                    datasets: [{
+                        label: 'Monthly Spending (£)',
+                        data: [720, 680, 890, 847],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#4CAF50',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeInOutQuart'
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Spending: £' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '£' + value;
+                                },
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Render receipts
+        function renderReceipts(receipts = sampleReceipts) {
+            const grid = document.getElementById('receiptsGrid');
+            grid.innerHTML = receipts.map(receipt => `
+                <div class="receipt-card" onclick="viewReceipt(${receipt.id})">
+                    <div class="receipt-header">
+                        <div class="merchant-name">${receipt.merchant}</div>
+                        <div class="receipt-date">${new Date(receipt.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="receipt-amount">£${receipt.amount.toFixed(2)}</div>
+                    <div class="receipt-category category-${receipt.category}">${receipt.category.charAt(0).toUpperCase() + receipt.category.slice(1)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Search functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase();
+                const filtered = sampleReceipts.filter(receipt => 
+                    receipt.merchant.toLowerCase().includes(query) ||
+                    receipt.category.toLowerCase().includes(query) ||
+                    receipt.items.some(item => item.toLowerCase().includes(query))
+                );
+                renderReceipts(filtered);
+            });
+        }
+
+        // Simulate receipt scanning
+        function simulateScan() {
+            alert('📱 QR Code Scanner would open here!\n\nIn the real app, this would:\n• Open camera\n• Scan QR code\n• Add receipt to your collection\n• Show spending insights');
+        }
+
+        // View receipt details
+        function viewReceipt(id) {
+            const receipt = sampleReceipts.find(r => r.id === id);
+            if (receipt) {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0,0,0,0.8);
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    z-index: 1000;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="
+                        background: white;
+                        border-radius: 20px;
+                        padding: 30px;
+                        max-width: 500px;
+                        width: 90%;
+                        max-height: 80vh;
+                        overflow-y: auto;
+                        position: relative;
+                    ">
+                        <button onclick="this.parentElement.parentElement.remove()" style="
+                            position: absolute;
+                            top: 15px;
+                            right: 15px;
+                            background: none;
+                            border: none;
+                            font-size: 24px;
+                            cursor: pointer;
+                            color: #666;
+                        ">×</button>
+                        
+                        <h2 style="color: #333; margin-bottom: 20px; font-size: 1.5rem;">${receipt.merchant}</h2>
+                        
+                        <div style="display: grid; gap: 15px;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 10px;">
+                                <span style="color: #666;">Date:</span>
+                                <span style="font-weight: bold;">${new Date(receipt.date).toLocaleDateString()}</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 10px;">
+                                <span style="color: #666;">Amount:</span>
+                                <span style="font-weight: bold; color: #2e7d32; font-size: 1.2rem;">£${receipt.amount.toFixed(2)}</span>
+                            </div>
+                            
+                            <div style="display: flex; justify-content: space-between; padding: 10px; background: #f8f9fa; border-radius: 10px;">
+                                <span style="color: #666;">Category:</span>
+                                <span class="receipt-category category-${receipt.category}" style="margin: 0;">${receipt.category.charAt(0).toUpperCase() + receipt.category.slice(1)}</span>
+                            </div>
+                            
+                            <div style="margin-top: 20px;">
+                                <h3 style="color: #333; margin-bottom: 15px;">Items Purchased:</h3>
+                                <div style="display: grid; gap: 8px;">
+                                    ${receipt.items.map(item => `
+                                        <div style="padding: 10px; background: #e3f2fd; border-radius: 8px; border-left: 3px solid #2196F3;">
+                                            ${item}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 20px; padding: 15px; background: linear-gradient(135deg, #4CAF50, #2E7D32); color: white; border-radius: 10px; text-align: center;">
+                                <p style="margin: 0; font-size: 0.9rem;">🌱 This digital receipt saved paper and reduced your carbon footprint!</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.onclick = (e) => {
+                    if (e.target === modal) modal.remove();
+                };
+            }
+        }
+
+        // Initialize the app
+        function init() {
+            initCharts();
+            renderReceipts();
+            setupSearch();
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>

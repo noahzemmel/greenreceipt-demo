@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GreenReceipt - Digital Receipt Demo</title>
+    <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script>
+        // Fallback QR code generation if library fails to load
+        window.QRCodeFallback = {
+            toCanvas: function(canvas, text, options, callback) {
+                try {
+                    // Create a simple QR-like pattern as fallback
+                    const ctx = canvas.getContext('2d');
+                    const size = options.width || 300;
+                    canvas.width = size;
+                    canvas.height = size;
+                    
+                    // Clear canvas
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, size, size);
+                    
+                    // Draw a simple pattern
+                    ctx.fillStyle = '#000000';
+                    const blockSize = size / 25;
+                    
+                    // Draw corner squares
+                    ctx.fillRect(0, 0, blockSize * 7, blockSize * 7);
+                    ctx.fillRect(size - blockSize * 7, 0, blockSize * 7, blockSize * 7);
+                    ctx.fillRect(0, size - blockSize * 7, blockSize * 7, blockSize * 7);
+                    
+                    // Draw some random pattern in the middle
+                    for (let i = 0; i < 100; i++) {
+                        const x = Math.random() * (size - blockSize * 2);
+                        const y = Math.random() * (size - blockSize * 2);
+                        if (Math.random() > 0.5) {
+                            ctx.fillRect(x, y, blockSize, blockSize);
+                        }
+                    }
+                    
+                    // Add text
+                    ctx.fillStyle = '#000000';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('QR Code', size/2, size/2);
+                    ctx.fillText('Demo', size/2, size/2 + 20);
+                    
+                    if (callback) callback(null);
+                } catch (error) {
+                    if (callback) callback(error);
+                }
+            }
+        };
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow-y: auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #22c55e;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
+        }
+        
+        .items-section {
+            margin-top: 30px;
+        }
+        
+        .items-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            align-items: end;
+        }
+        
+        .item-row input {
+            margin-bottom: 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+            margin-left: 10px;
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(107, 114, 128, 0.4);
+        }
+        
+        .totals {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .totals-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .totals-row.final {
+            border-top: 2px solid #22c55e;
+            padding-top: 15px;
+            font-weight: 700;
+            font-size: 20px;
+            color: #22c55e;
+        }
+        
+        .qr-section {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .qr-placeholder {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px dashed #cbd5e1;
+            margin: 20px 0;
+        }
+        
+        .qr-placeholder h3 {
+            color: #64748b;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .qr-placeholder p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+        
+        .qr-code {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        
+        .status {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .status.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 2px solid #bbf7d0;
+        }
+        
+        .status.error {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+        }
+        
+        .status.info {
+            background: #dbeafe;
+            color: #1e40af;
+            border: 2px solid #bfdbfe;
+        }
+        
+        .demo-info {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .demo-info h3 {
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .demo-info p {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .feature-list li:before {
+            content: "✓ ";
+            color: #22c55e;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                height: auto;
+            }
+            
+            .item-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>🌱 GreenReceipt</h1>
+                <p>Create digital receipts and generate QR codes for customers</p>
+            </div>
+            
+            <div class="demo-info">
+                <h3>🚀 Live Demo</h3>
+                <p>This is a working prototype of GreenReceipt - a digital receipt system that allows customers to scan QR codes at checkout to receive digital receipts anonymously.</p>
+            </div>
+            
+            <div id="status"></div>
+            
+            <form id="receiptForm">
+                <div class="form-group">
+                    <label for="merchant">Merchant</label>
+                    <select id="merchant" required>
+                        <option value="">Select a merchant...</option>
+                        <option value="tesco">Tesco Express</option>
+                        <option value="apple">Apple Store</option>
+                        <option value="costa">Costa Coffee</option>
+                        <option value="boots">Boots</option>
+                        <option value="john-lewis">John Lewis</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="card">💳 Card</option>
+                        <option value="cash">💵 Cash</option>
+                        <option value="contactless">📱 Contactless</option>
+                        <option value="apple-pay">🍎 Apple Pay</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" placeholder="e.g., Grocery, Electronics, Food & Drink">
+                </div>
+
+                <div class="items-section">
+                    <h3>🛒 Items</h3>
+                    <div id="items">
+                        <div class="item-row">
+                            <input type="text" placeholder="Item name" class="item-name" required>
+                            <input type="text" placeholder="SKU" class="item-sku">
+                            <input type="number" placeholder="Qty" class="item-qty" min="1" value="1" required>
+                            <input type="number" placeholder="Price" class="item-price" step="0.01" min="0" required>
+                            <input type="text" placeholder="Category" class="item-category">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addItem()">+ Add Item</button>
+                </div>
+
+                <div class="totals">
+                    <div class="totals-row">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">£0.00</span>
+                    </div>
+                    <div class="totals-row">
+                        <span>Tax (20%):</span>
+                        <span id="tax">£0.00</span>
+                    </div>
+                    <div class="totals-row final">
+                        <span>Total:</span>
+                        <span id="total">£0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="submitBtn">🎯 Generate QR Code</button>
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">🔄 Reset</button>
+                <button type="button" class="btn btn-secondary" onclick="testQRCode()">🧪 Test QR</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <div class="qr-section">
+                <h2>📱 QR Code</h2>
+                
+                <div id="qrPlaceholder" class="qr-placeholder">
+                    <h3>Ready to Generate</h3>
+                    <p>Fill out the receipt form and click "Generate QR Code" to create a QR code that customers can scan with the GreenReceipt mobile app.</p>
+                </div>
+                
+                <div id="qrCode" style="display: none;">
+                    <div class="qr-code">
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
+                    <p><strong>📲 Customer can scan this QR code with the GreenReceipt mobile app</strong></p>
+                    <button class="btn btn-secondary" onclick="copyQRData()">📋 Copy QR Data</button>
+                </div>
+                
+                <div style="margin-top: 30px; text-align: left;">
+                    <h3>✨ Features Demonstrated:</h3>
+                    <ul class="feature-list">
+                        <li>Real-time receipt calculation</li>
+                        <li>QR code generation with security</li>
+                        <li>Anonymous customer handoff</li>
+                        <li>Digital receipt storage</li>
+                        <li>Spending analytics ready</li>
+                        <li>Multi-merchant support</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentQRData = null;
+
+        // Add item row
+        function addItem() {
+            const itemsDiv = document.getElementById('items');
+            const itemRow = document.createElement('div');
+            itemRow.className = 'item-row';
+            itemRow.innerHTML = `
+                <input type="text" placeholder="Item name" class="item-name" required>
+                <input type="text" placeholder="SKU" class="item-sku">
+                <input type="number" placeholder="Qty" class="item-qty" min="1" value="1" required>
+                <input type="number" placeholder="Price" class="item-price" step="0.01" min="0" required>
+                <input type="text" placeholder="Category" class="item-category">
+            `;
+            itemsDiv.appendChild(itemRow);
+        }
+
+        // Calculate totals
+        function calculateTotals() {
+            const itemRows = document.querySelectorAll('.item-row');
+            let subtotal = 0;
+
+            itemRows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+                const price = parseFloat(row.querySelector('.item-price').value) || 0;
+                subtotal += qty * price;
+            });
+
+            const tax = subtotal * 0.2;
+            const total = subtotal + tax;
+
+            document.getElementById('subtotal').textContent = `£${subtotal.toFixed(2)}`;
+            document.getElementById('tax').textContent = `£${tax.toFixed(2)}`;
+            document.getElementById('total').textContent = `£${total.toFixed(2)}`;
+
+            return { subtotal: Math.round(subtotal * 100), tax: Math.round(tax * 100), total: Math.round(total * 100) };
+        }
+
+        // Show status message
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+            setTimeout(() => {
+                statusDiv.innerHTML = '';
+            }, 5000);
+        }
+
+        // Generate QR code
+        function generateQRCode(qrData) {
+            const canvas = document.getElementById('qrCanvas');
+            
+            // Clear any existing QR code
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Set canvas size
+            canvas.width = 300;
+            canvas.height = 300;
+            
+            const options = { 
+                width: 300,
+                margin: 2,
+                color: {
+                    dark: '#000000',
+                    light: '#FFFFFF'
+                }
+            };
+            
+            // Try to use QRCode library, fallback to custom implementation
+            const qrGenerator = (typeof QRCode !== 'undefined') ? QRCode : window.QRCodeFallback;
+            
+            if (!qrGenerator) {
+                console.error('No QR code generator available');
+                showStatus('QR Code generator not available', 'error');
+                return;
+            }
+            
+            try {
+                qrGenerator.toCanvas(canvas, qrData, options, (error) => {
+                    if (error) {
+                        console.error('QR Code generation error:', error);
+                        showStatus('Failed to generate QR code: ' + error.message, 'error');
+                        return;
+                    }
+                    document.getElementById('qrPlaceholder').style.display = 'none';
+                    document.getElementById('qrCode').style.display = 'block';
+                    showStatus('QR code generated successfully!', 'success');
+                });
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                showStatus('Failed to generate QR code: ' + error.message, 'error');
+            }
+        }
+
+        // Copy QR data
+        function copyQRData() {
+            if (currentQRData) {
+                navigator.clipboard.writeText(currentQRData).then(() => {
+                    showStatus('QR data copied to clipboard!', 'success');
+                });
+            }
+        }
+
+        // Test QR code generation
+        function testQRCode() {
+            const testData = '{"ver":1,"rid":"test-123","m":"tesco","n":"test-nonce","exp":' + (Math.floor(Date.now() / 1000) + 120) + ',"sig":"test-signature"}';
+            currentQRData = testData;
+            generateQRCode(testData);
+            showStatus('Test QR code generated!', 'info');
+        }
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('receiptForm').reset();
+            document.getElementById('items').innerHTML = `
+                <div class="item-row">
+                    <input type="text" placeholder="Item name" class="item-name" required>
+                    <input type="text" placeholder="SKU" class="item-sku">
+                    <input type="number" placeholder="Qty" class="item-qty" min="1" value="1" required>
+                    <input type="number" placeholder="Price" class="item-price" step="0.01" min="0" required>
+                    <input type="text" placeholder="Category" class="item-category">
+                </div>
+            `;
+            document.getElementById('qrPlaceholder').style.display = 'block';
+            document.getElementById('qrCode').style.display = 'none';
+            calculateTotals();
+        }
+
+        // Generate mock QR data
+        function generateMockQRData() {
+            const merchant = document.getElementById('merchant').value;
+            const totals = calculateTotals();
+            const itemRows = document.querySelectorAll('.item-row');
+            const items = [];
+
+            itemRows.forEach(row => {
+                const name = row.querySelector('.item-name').value;
+                const sku = row.querySelector('.item-sku').value;
+                const qty = parseInt(row.querySelector('.item-qty').value);
+                const price = Math.round(parseFloat(row.querySelector('.item-price').value) * 100);
+                const category = row.querySelector('.item-category').value;
+
+                if (name.trim()) {
+                    items.push({
+                        name: name.trim(),
+                        sku: sku.trim() || undefined,
+                        quantity: qty,
+                        unitPrice: price,
+                        total: qty * price,
+                        category: category.trim() || undefined
+                    });
+                }
+            });
+
+            // Create mock QR payload
+            const qrPayload = {
+                ver: 1,
+                rid: 'demo-' + Date.now(),
+                m: merchant,
+                n: Math.random().toString(36).substring(2, 15),
+                exp: Math.floor(Date.now() / 1000) + 120, // 2 minutes
+                sig: 'demo-signature-' + Math.random().toString(36).substring(2, 15)
+            };
+
+            return JSON.stringify(qrPayload);
+        }
+
+        // Form submission
+        document.getElementById('receiptForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Generating...';
+
+            try {
+                // Validate form
+                const merchant = document.getElementById('merchant').value;
+                if (!merchant) {
+                    showStatus('Please select a merchant', 'error');
+                    return;
+                }
+
+                // Check if at least one item has a name
+                const itemRows = document.querySelectorAll('.item-row');
+                let hasValidItem = false;
+                itemRows.forEach(row => {
+                    const name = row.querySelector('.item-name').value.trim();
+                    if (name) hasValidItem = true;
+                });
+
+                if (!hasValidItem) {
+                    showStatus('Please add at least one item', 'error');
+                    return;
+                }
+
+                // Generate mock QR data for demo
+                const qrData = generateMockQRData();
+                currentQRData = qrData;
+                
+                console.log('Generated QR data:', qrData);
+                generateQRCode(qrData);
+
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`Failed to create receipt: ${error.message}`, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🎯 Generate QR Code';
+            }
+        });
+
+        // Add event listeners for real-time calculation
+        document.addEventListener('input', (e) => {
+            if (e.target.classList.contains('item-qty') || e.target.classList.contains('item-price')) {
+                calculateTotals();
+            }
+        });
+
+        // Initialize with sample data
+        function init() {
+            // Add some sample items
+            addItem();
+            addItem();
+            
+            // Fill with sample data
+            const itemRows = document.querySelectorAll('.item-row');
+            if (itemRows[0]) {
+                itemRows[0].querySelector('.item-name').value = 'Organic Bananas';
+                itemRows[0].querySelector('.item-sku').value = 'BANANA-ORG';
+                itemRows[0].querySelector('.item-qty').value = '6';
+                itemRows[0].querySelector('.item-price').value = '0.20';
+                itemRows[0].querySelector('.item-category').value = 'Fruit';
+            }
+            if (itemRows[1]) {
+                itemRows[1].querySelector('.item-name').value = 'Wholemeal Bread';
+                itemRows[1].querySelector('.item-sku').value = 'BREAD-WHOLE';
+                itemRows[1].querySelector('.item-qty').value = '1';
+                itemRows[1].querySelector('.item-price').value = '1.20';
+                itemRows[1].querySelector('.item-category').value = 'Bakery';
+            }
+            
+            document.getElementById('merchant').value = 'tesco';
+            document.getElementById('category').value = 'Grocery';
+            
+            calculateTotals();
+            
+            // Check QR code library status
+            setTimeout(() => {
+                if (typeof QRCode !== 'undefined') {
+                    console.log('✅ QRCode library loaded successfully');
+                    showStatus('QR Code library loaded successfully!', 'success');
+                } else {
+                    console.log('⚠️ QRCode library not loaded, using fallback');
+                    showStatus('Using fallback QR code generator', 'info');
+                }
+            }, 1000);
+        }
+
+        // Wait for page to load completely
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    </script>
+</body>
+</html>

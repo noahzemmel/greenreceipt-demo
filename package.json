@@ -1,0 +1,33 @@
+{
+  "name": "greenreceipt-demo",
+  "version": "1.0.0",
+  "description": "GreenReceipt - Digital Receipt Management System Demo",
+  "main": "serve.js",
+  "scripts": {
+    "start": "node serve.js",
+    "dev": "python3 -m http.server 8000",
+    "build": "echo 'No build process needed - pure HTML/CSS/JS'",
+    "serve": "npx serve ."
+  },
+  "keywords": [
+    "digital-receipts",
+    "qr-codes",
+    "spending-analytics",
+    "environmental",
+    "demo",
+    "prototype"
+  ],
+  "author": "GreenReceipt Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/greenreceipt-demo.git"
+  },
+  "homepage": "https://yourusername.github.io/greenreceipt-demo",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
