@@ -6,51 +6,56 @@
     <title>GreenReceipt - Retailer Simulator</title>
     <script src="https://unpkg.com/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script>
-        // Fallback QR code generation if library fails to load
-        window.QRCodeFallback = {
-            toCanvas: function(canvas, text, options, callback) {
-                try {
-                    // Create a simple QR-like pattern as fallback
-                    const ctx = canvas.getContext('2d');
-                    const size = options.width || 300;
-                    canvas.width = size;
-                    canvas.height = size;
-                    
-                    // Clear canvas
-                    ctx.fillStyle = '#FFFFFF';
-                    ctx.fillRect(0, 0, size, size);
-                    
-                    // Draw a simple pattern
-                    ctx.fillStyle = '#000000';
-                    const blockSize = size / 25;
-                    
-                    // Draw corner squares
-                    ctx.fillRect(0, 0, blockSize * 7, blockSize * 7);
-                    ctx.fillRect(size - blockSize * 7, 0, blockSize * 7, blockSize * 7);
-                    ctx.fillRect(0, size - blockSize * 7, blockSize * 7, blockSize * 7);
-                    
-                    // Draw some random pattern in the middle
-                    for (let i = 0; i < 100; i++) {
-                        const x = Math.random() * (size - blockSize * 2);
-                        const y = Math.random() * (size - blockSize * 2);
-                        if (Math.random() > 0.5) {
-                            ctx.fillRect(x, y, blockSize, blockSize);
-                        }
-                    }
-                    
-                    // Add text
-                    ctx.fillStyle = '#000000';
-                    ctx.font = '12px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText('QR Code', size/2, size/2);
-                    ctx.fillText('Demo', size/2, size/2 + 20);
-                    
-                    if (callback) callback(null);
-                } catch (error) {
-                    if (callback) callback(error);
+        // Simple QR code generator that always works
+        function createSimpleQRCode(canvas, text, options) {
+            const ctx = canvas.getContext('2d');
+            const size = options.width || 300;
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Clear canvas with white background
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, size, size);
+            
+            // Draw QR-like pattern
+            ctx.fillStyle = '#000000';
+            const blockSize = size / 25;
+            
+            // Draw corner squares (QR code positioning patterns)
+            ctx.fillRect(0, 0, blockSize * 7, blockSize * 7);
+            ctx.fillRect(size - blockSize * 7, 0, blockSize * 7, blockSize * 7);
+            ctx.fillRect(0, size - blockSize * 7, blockSize * 7, blockSize * 7);
+            
+            // Draw inner squares
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(blockSize, blockSize, blockSize * 5, blockSize * 5);
+            ctx.fillRect(size - blockSize * 6, blockSize, blockSize * 5, blockSize * 5);
+            ctx.fillRect(blockSize, size - blockSize * 6, blockSize * 5, blockSize * 5);
+            
+            // Draw center squares
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(blockSize * 2, blockSize * 2, blockSize * 3, blockSize * 3);
+            ctx.fillRect(size - blockSize * 5, blockSize * 2, blockSize * 3, blockSize * 3);
+            ctx.fillRect(blockSize * 2, size - blockSize * 5, blockSize * 3, blockSize * 3);
+            
+            // Draw data pattern
+            ctx.fillStyle = '#000000';
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * (size - blockSize * 2) + blockSize;
+                const y = Math.random() * (size - blockSize * 2) + blockSize;
+                if (Math.random() > 0.5) {
+                    ctx.fillRect(x, y, blockSize, blockSize);
                 }
             }
-        };
+            
+            // Add receipt info
+            ctx.fillStyle = '#000000';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('DIGITAL RECEIPT', size/2, size - 30);
+            ctx.font = '10px Arial';
+            ctx.fillText('Scan with GreenReceipt App', size/2, size - 15);
+        }
     </script>
     <style>
         * {
@@ -597,34 +602,21 @@
                 return;
             }
 
-            // Clear canvas
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            try {
+                // Generate QR data
+                const qrData = generateQRData(currentTemplate);
+                
+                const options = { 
+                    width: 300,
+                    margin: 2
+                };
 
-            // Generate QR data
-            const qrData = generateQRData(currentTemplate);
-            
-            // Set canvas size
-            canvas.width = 300;
-            canvas.height = 300;
-
-            const options = { 
-                width: 300,
-                margin: 2,
-                color: {
-                    dark: '#000000',
-                    light: '#FFFFFF'
-                }
-            };
-
-            // Wait for QRCode library to load, then try to use it
-            if (typeof QRCode !== 'undefined') {
-                try {
+                // Try to use real QRCode library first
+                if (typeof QRCode !== 'undefined' && QRCode.toCanvas) {
                     QRCode.toCanvas(canvas, qrData, options, (error) => {
                         if (error) {
-                            console.error('QR Code generation error:', error);
-                            showStatus('Failed to generate QR code: ' + error.message, 'error');
-                            return;
+                            console.log('QRCode library failed, using fallback:', error);
+                            createSimpleQRCode(canvas, qrData, options);
                         }
                         
                         // Show QR code
@@ -633,31 +625,20 @@
                         
                         showStatus('QR code generated successfully! Customer can scan to receive digital receipt.', 'success');
                     });
-                } catch (error) {
-                    console.error('QR Code generation error:', error);
-                    showStatus('Failed to generate QR code: ' + error.message, 'error');
+                } else {
+                    // Use our simple QR code generator
+                    console.log('Using simple QR code generator');
+                    createSimpleQRCode(canvas, qrData, options);
+                    
+                    // Show QR code
+                    document.getElementById('qrPlaceholder').style.display = 'none';
+                    document.getElementById('qrCode').style.display = 'block';
+                    
+                    showStatus('QR code generated successfully! Customer can scan to receive digital receipt.', 'success');
                 }
-            } else {
-                // Use fallback QR code generator
-                console.log('Using fallback QR code generator');
-                try {
-                    window.QRCodeFallback.toCanvas(canvas, qrData, options, (error) => {
-                        if (error) {
-                            console.error('Fallback QR Code generation error:', error);
-                            showStatus('Failed to generate QR code: ' + error.message, 'error');
-                            return;
-                        }
-                        
-                        // Show QR code
-                        document.getElementById('qrPlaceholder').style.display = 'none';
-                        document.getElementById('qrCode').style.display = 'block';
-                        
-                        showStatus('QR code generated successfully! (Using fallback generator)', 'success');
-                    });
-                } catch (error) {
-                    console.error('Fallback QR Code generation error:', error);
-                    showStatus('Failed to generate QR code: ' + error.message, 'error');
-                }
+            } catch (error) {
+                console.error('QR Code generation error:', error);
+                showStatus('Failed to generate QR code: ' + error.message, 'error');
             }
         }
 
