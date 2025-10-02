@@ -5,7 +5,7 @@ const path = require('path');
 const server = http.createServer((req, res) => {
     let filePath = '.' + req.url;
     if (filePath === './') {
-        filePath = './greenreceipt-demo.html';
+        filePath = './vault-demo.html';
     }
 
     const extname = String(path.extname(filePath)).toLowerCase();
@@ -47,6 +47,6 @@ const server = http.createServer((req, res) => {
 
 const PORT = 8080;
 server.listen(PORT, () => {
-    console.log(`🌱 GreenReceipt Demo running at http://localhost:${PORT}`);
+    console.log(`🔒 Vault Demo running at http://localhost:${PORT}`);
     console.log('Press Ctrl+C to stop the server');
 });

@@ -1,10 +1,10 @@
-# GreenReceipt 🌱
+# Vault 🔒
 
 A mobile app where shoppers scan QR codes at checkout to receive digital receipts. The app stores all receipts and shows spending stats while maintaining complete anonymity - no email or phone numbers exchanged at checkout.
 
 ## 🎯 Project Overview
 
-GreenReceipt addresses the problem of paper receipt waste while providing valuable spending insights to consumers. The key innovation is the **anonymous QR handoff** - no personal data is exchanged at checkout, matching our "no personal data barrier" approach.
+Vault addresses the problem of paper receipt waste while providing valuable spending insights to consumers. The key innovation is the **anonymous QR handoff** - no personal data is exchanged at checkout, matching our "no personal data barrier" approach.
 
 ### Key Features
 
@@ -19,7 +19,7 @@ GreenReceipt addresses the problem of paper receipt waste while providing valuab
 
 ### Monorepo Structure
 ```
-green-receipt/
+vault/
 ├── apps/
 │   ├── mobile/          # React Native/Expo mobile app
 │   └── retailer-sim/    # Vite + React web simulator
@@ -73,7 +73,7 @@ green-receipt/
 
 ```bash
 git clone <repository-url>
-cd green-receipt
+cd vault
 pnpm install
 ```
 
@@ -256,7 +256,7 @@ pnpm web      # Web
 
 ### API Service (.env)
 ```env
-DATABASE_URL="postgresql://postgres:password@localhost:5432/greenreceipt"
+DATABASE_URL="postgresql://postgres:password@localhost:5432/vault"
 JWT_SECRET="your-jwt-secret"
 RETAILER_SIGNING_SECRET="your-retailer-secret"
 QR_TTL_SECONDS=120
@@ -313,4 +313,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ---
 
-**GreenReceipt** - Making receipts digital, anonymous, and insightful. 🌱
+**Vault** - Making receipts digital, anonymous, and insightful. 🔒

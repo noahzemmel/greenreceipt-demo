@@ -1,4 +1,4 @@
-# 🌱 GreenReceipt Demo
+# 🔒 Vault Demo
 
 A complete digital receipt management system prototype with retailer simulator and consumer interface.
 
@@ -6,7 +6,7 @@ A complete digital receipt management system prototype with retailer simulator a
 
 ### Option 1: Open Directly in Browser
 1. Download the HTML files
-2. Open `greenreceipt-demo.html` in any modern web browser
+2. Open `vault-demo.html` in any modern web browser
 3. Open `consumer-demo.html` in any modern web browser
 
 ### Option 2: Local Server (Recommended)
@@ -21,18 +21,18 @@ A complete digital receipt management system prototype with retailer simulator a
    
    # Or any other local server
    ```
-3. Open http://localhost:8000/greenreceipt-demo.html
+3. Open http://localhost:8000/vault-demo.html
 4. Open http://localhost:8000/consumer-demo.html
 
 ## 📱 Demo Files
 
-- **`greenreceipt-demo.html`** - Retailer simulator for creating receipts and QR codes
+- **`vault-demo.html`** - Retailer simulator for creating receipts and QR codes
 - **`consumer-demo.html`** - Consumer interface for viewing receipts and spending analytics
 - **`serve.js`** - Simple Node.js server (optional)
 
 ## ✨ Features Demonstrated
 
-### Retailer Simulator (`greenreceipt-demo.html`)
+### Retailer Simulator (`vault-demo.html`)
 - Create digital receipts with items, pricing, and categories
 - Generate QR codes for receipt handoff
 - Test QR code generation functionality
@@ -78,8 +78,8 @@ A complete digital receipt management system prototype with retailer simulator a
 
 ## 📧 Support
 
-This is a prototype demonstration. For questions about the actual GreenReceipt product, contact the development team.
+This is a prototype demonstration. For questions about the actual Vault product, contact the development team.
 
 ---
 
-**GreenReceipt** - Digital receipts, environmental impact, smart spending insights 🌱
+**Vault** - Digital receipts, environmental impact, smart spending insights 🔒

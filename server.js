@@ -47,6 +47,6 @@ const server = http.createServer((req, res) => {
 
 const PORT = 5000;
 server.listen(PORT, () => {
-    console.log(`🌱 GreenReceipt Demo running at http://localhost:${PORT}`);
+    console.log(`🔒 Vault Demo running at http://localhost:${PORT}`);
     console.log('Press Ctrl+C to stop the server');
 });

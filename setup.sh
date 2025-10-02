@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# GreenReceipt Setup Script
-echo "🌱 Setting up GreenReceipt..."
+# Vault Setup Script
+echo "🔒 Setting up Vault..."
 
 # Check if pnpm is installed
 if ! command -v pnpm &> /dev/null; then

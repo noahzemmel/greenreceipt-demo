@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GreenReceipt Demo</title>
+    <title>Vault Demo</title>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <style>
         * {
@@ -274,13 +274,13 @@
     <div class="container">
         <div class="card">
             <div class="header">
-                <h1>🌱 GreenReceipt</h1>
+                <h1>🔒 Vault</h1>
                 <p>Create digital receipts and generate QR codes for customers</p>
             </div>
             
             <div class="demo-info">
                 <h3>🚀 Live Demo</h3>
-                <p>This is a working prototype of GreenReceipt - a digital receipt system that allows customers to scan QR codes at checkout to receive digital receipts anonymously.</p>
+                <p>This is a working prototype of Vault - a digital receipt system that allows customers to scan QR codes at checkout to receive digital receipts anonymously.</p>
             </div>
             
             <div id="status"></div>
@@ -353,14 +353,14 @@
                 
                 <div id="qrPlaceholder" class="qr-placeholder">
                     <h3>Ready to Generate</h3>
-                    <p>Fill out the receipt form and click "Generate QR Code" to create a QR code that customers can scan with the GreenReceipt mobile app.</p>
+                    <p>Fill out the receipt form and click "Generate QR Code" to create a QR code that customers can scan with the Vault mobile app.</p>
                 </div>
                 
                 <div id="qrCode" style="display: none;">
                     <div class="qr-code">
                         <canvas id="qrCanvas"></canvas>
                     </div>
-                    <p><strong>📲 Customer can scan this QR code with the GreenReceipt mobile app</strong></p>
+                    <p><strong>📲 Customer can scan this QR code with the Vault mobile app</strong></p>
                     <button class="btn btn-secondary" onclick="copyQRData()">📋 Copy QR Data</button>
                 </div>
                 

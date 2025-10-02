@@ -1,7 +1,7 @@
 {
-  "name": "greenreceipt-demo",
+  "name": "vault-demo",
   "version": "1.0.0",
-  "description": "GreenReceipt - Digital Receipt Management System Demo",
+  "description": "Vault - Digital Receipt Management System Demo",
   "main": "serve.js",
   "scripts": {
     "start": "node serve.js",
@@ -17,13 +17,13 @@
     "demo",
     "prototype"
   ],
-  "author": "GreenReceipt Team",
+  "author": "Vault Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/greenreceipt-demo.git"
+    "url": "https://github.com/yourusername/vault-demo.git"
   },
-  "homepage": "https://yourusername.github.io/greenreceipt-demo",
+  "homepage": "https://yourusername.github.io/vault-demo",
   "engines": {
     "node": ">=14.0.0"
   },

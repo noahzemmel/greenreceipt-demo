@@ -1,4 +1,4 @@
-# 🌱 GreenReceipt Demo
+# 🔒 Vault Demo
 
 ## 🎉 Demo is Running!
 
@@ -106,12 +106,12 @@ cd apps/mobile && pnpm start
 ### 📊 Database
 
 - **Host**: localhost:5433
-- **Database**: greenreceipt
+- **Database**: vault
 - **User**: postgres
 - **Password**: password
 
-Access with: `psql postgresql://postgres:password@localhost:5433/greenreceipt`
+Access with: `psql postgresql://postgres:password@localhost:5433/vault`
 
 ---
 
-**GreenReceipt** - Making receipts digital, anonymous, and insightful! 🌱
+**Vault** - Making receipts digital, anonymous, and insightful! 🔒

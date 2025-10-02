@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 const API_BASE = 'http://localhost:3001/api';
 
 async function testDemo() {
-    console.log('🌱 GreenReceipt Demo Test\n');
+    console.log('🔒 Vault Demo Test\n');
 
     try {
         // 1. Check API health
