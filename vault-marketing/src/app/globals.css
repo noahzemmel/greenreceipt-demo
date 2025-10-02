@@ -319,32 +319,60 @@
 
 /* Custom Utility Classes */
 .text-gradient-green {
-  @apply bg-gradient-to-r from-green-400 to-green-600 text-transparent bg-clip-text;
+  background: linear-gradient(to right, rgb(74 222 128), rgb(22 163 74));
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 .text-gradient-blue {
-  @apply bg-gradient-to-r from-blue-400 to-blue-600 text-transparent bg-clip-text;
+  background: linear-gradient(to right, rgb(96 165 250), rgb(37 99 235));
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 .text-gradient-purple {
-  @apply bg-gradient-to-r from-purple-400 to-purple-600 text-transparent bg-clip-text;
+  background: linear-gradient(to right, rgb(168 85 247), rgb(147 51 234));
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 .text-gradient-red {
-  @apply bg-gradient-to-r from-red-400 to-red-600 text-transparent bg-clip-text;
+  background: linear-gradient(to right, rgb(248 113 113), rgb(220 38 38));
+  color: transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
 }
 
 .card-hover {
-  @apply transition-all duration-300 ease-in-out hover:scale-[1.02] hover:shadow-2xl hover:-translate-y-1;
+  transition: all 0.3s ease-in-out;
 }
 
 .card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: scale(1.02) translateY(-4px);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
+
 .btn-primary {
-  @apply bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-4 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden;
+  background: linear-gradient(to right, rgb(34 197 94), rgb(22 163 74));
+  color: white;
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  transform: scale(1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(to right, rgb(22 163 74), rgb(21 128 61));
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: scale(1.05);
 }
 
 .btn-primary::before {
@@ -363,7 +391,22 @@
 }
 
 .btn-secondary {
-  @apply bg-white border border-gray-300 text-gray-800 font-semibold py-4 px-8 rounded-full shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-105 hover:border-green-500 hover:text-green-600;
+  background-color: white;
+  border: 1px solid rgb(209 213 219);
+  color: rgb(31 41 55);
+  font-weight: 600;
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  transform: scale(1);
+}
+
+.btn-secondary:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
+  border-color: rgb(34 197 94);
+  color: rgb(22 163 74);
 }
 
 /* Glass morphism effect */
@@ -413,8 +456,9 @@
 }
 
 /* Focus styles */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2;
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(34 197 94), 0 0 0 4px rgba(34, 197, 94, 0.2);
 }
 
 /* Loading spinner */
@@ -434,15 +478,27 @@
 
 /* Hover effects */
 .hover-lift {
-  @apply transition-transform duration-300 hover:-translate-y-2;
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
 }
 
 .hover-glow {
-  @apply transition-all duration-300 hover:shadow-lg hover:shadow-green-500/25;
+  transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 10px 15px -3px rgba(34, 197, 94, 0.25), 0 4px 6px -2px rgba(34, 197, 94, 0.1);
 }
 
 .hover-scale {
-  @apply transition-transform duration-300 hover:scale-105;
+  transition: transform 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
 }
 
 /* Text effects */
