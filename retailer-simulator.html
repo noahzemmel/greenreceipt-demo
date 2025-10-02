@@ -109,6 +109,36 @@
             font-size: 1.1rem;
         }
 
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-item.active {
+            background: #4CAF50;
+            color: white;
+        }
+
         .main-content {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -365,6 +395,12 @@
             </div>
             <h1>🏪 Vault Retailer Simulator</h1>
             <p>Select a receipt template and generate QR codes for digital handoff</p>
+        </div>
+
+        <div class="navigation">
+            <a href="retailer-simulator.html" class="nav-item active">🏪 Retailer</a>
+            <a href="consumer-demo.html" class="nav-item">📱 Consumer</a>
+            <a href="office-expenses.html" class="nav-item">💼 Office Expenses</a>
         </div>
 
         <div class="main-content">
