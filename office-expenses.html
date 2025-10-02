@@ -86,6 +86,29 @@
             color: white;
         }
 
+        .notification-bell {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
         .month-header {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
@@ -318,9 +341,13 @@
         </div>
 
         <div class="navigation">
-            <a href="consumer-demo.html" class="nav-item">📱 Consumer</a>
-            <a href="retailer-simulator.html" class="nav-item">🏪 Retailer</a>
-            <a href="office-expenses.html" class="nav-item active">💼 Office Expenses</a>
+            <a href="office-expenses.html" class="nav-item active">💼 Office</a>
+            <a href="scan.html" class="nav-item">📷 Scan</a>
+            <a href="requests.html" class="nav-item">📋 Requests</a>
+            <a href="notifications.html" class="nav-item notification-bell">
+                🔔 Notifications
+                <span class="notification-badge" id="notificationBadge">0</span>
+            </a>
         </div>
 
         <div class="month-header">
@@ -381,51 +408,23 @@
         </div>
     </div>
 
-    <script>
-        // Expense data model
-        const expenseCategories = [
-            { id: 'work-meals', name: 'Work Meals', icon: '🍽️' },
-            { id: 'brussels-trip', name: 'Brussels Trip', icon: '🧳' },
-            { id: 'train-travel', name: 'Train Travel', icon: '🚆' },
-            { id: 'office-supplies', name: 'Office Supplies', icon: '📦' },
-            { id: 'team-coffee', name: 'Team Coffee', icon: '☕' },
-            { id: 'client-lunch', name: 'Client Lunch', icon: '🍝' }
-        ];
+    <script type="module">
+        import { 
+            getExpenseCategories, 
+            getExpenseItems, 
+            addExpenseItem, 
+            getUnreadNotificationCount 
+        } from './lib/expenses.store.js';
 
-        const expenseItems = [
-            // Work Meals
-            { id: '1', categoryId: 'work-meals', merchant: 'Nando\'s', date: '2025-10-02', amountGBP: 16.99 },
-            { id: '2', categoryId: 'work-meals', merchant: 'Wondy\'s', date: '2025-10-10', amountGBP: 12.60 },
-            { id: '3', categoryId: 'work-meals', merchant: 'Pizza Express', date: '2025-10-20', amountGBP: 9.25 },
-            { id: '4', categoryId: 'work-meals', merchant: 'Itsu', date: '2025-10-21', amountGBP: 8.90 },
-            
-            // Brussels Trip
-            { id: '5', categoryId: 'brussels-trip', merchant: 'Eurostar', date: '2025-10-03', amountGBP: 247.50 },
-            { id: '6', categoryId: 'brussels-trip', merchant: 'Hotel Midi', date: '2025-10-03', amountGBP: 168.00 },
-            { id: '7', categoryId: 'brussels-trip', merchant: 'City Taxi', date: '2025-10-04', amountGBP: 12.00 },
-            
-            // Train Travel
-            { id: '8', categoryId: 'train-travel', merchant: 'GWR Ticket', date: '2025-10-06', amountGBP: 61.00 },
-            { id: '9', categoryId: 'train-travel', merchant: 'TfL Top-up', date: '2025-10-07', amountGBP: 12.50 },
-            { id: '10', categoryId: 'train-travel', merchant: 'LNER Ticket', date: '2025-10-15', amountGBP: 22.50 },
-            
-            // Office Supplies
-            { id: '11', categoryId: 'office-supplies', merchant: 'Ryman', date: '2025-10-05', amountGBP: 34.20 },
-            { id: '12', categoryId: 'office-supplies', merchant: 'Amazon Basics', date: '2025-10-09', amountGBP: 19.99 },
-            
-            // Team Coffee
-            { id: '13', categoryId: 'team-coffee', merchant: 'Pret', date: '2025-10-08', amountGBP: 11.30 },
-            { id: '14', categoryId: 'team-coffee', merchant: 'Costa', date: '2025-10-12', amountGBP: 9.10 },
-            
-            // Client Lunch
-            { id: '15', categoryId: 'client-lunch', merchant: 'Dishoom', date: '2025-10-14', amountGBP: 43.80 },
-            { id: '16', categoryId: 'client-lunch', merchant: 'Franco Manca', date: '2025-10-22', amountGBP: 28.40 }
-        ];
+        let expenseCategories = [];
+        let expenseItems = [];
 
-        const expenseReports = [
-            { id: '1', month: '2025-10', categoryId: 'work-meals', itemIds: ['1', '2'], status: 'submitted', generatedAt: '2025-10-25' },
-            { id: '2', month: '2025-10', categoryId: 'brussels-trip', itemIds: ['5', '6', '7'], status: 'approved', generatedAt: '2025-10-20' }
-        ];
+        // Load data from store
+        function loadData() {
+            expenseCategories = getExpenseCategories();
+            expenseItems = getExpenseItems();
+            updateNotificationBadge();
+        }
 
         // Calculate totals for each category
         function calculateCategoryTotals() {
@@ -436,6 +435,13 @@
                     .reduce((sum, item) => sum + item.amountGBP, 0);
             });
             return totals;
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            const count = getUnreadNotificationCount();
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'flex' : 'none';
         }
 
         // Format currency
@@ -470,32 +476,10 @@
             }).join('');
         }
 
-        // Render expense reports
+        // Render expense reports (placeholder for future reports feature)
         function renderExpenseReports() {
             const container = document.getElementById('reportsList');
-            
-            if (expenseReports.length === 0) {
-                container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">No reports submitted yet</p>';
-                return;
-            }
-            
-            container.innerHTML = expenseReports.map(report => {
-                const category = expenseCategories.find(cat => cat.id === report.categoryId);
-                const total = report.itemIds.reduce((sum, itemId) => {
-                    const item = expenseItems.find(item => item.id === itemId);
-                    return sum + (item ? item.amountGBP : 0);
-                }, 0);
-                
-                return `
-                    <div class="report-item" onclick="openReportDetail('${report.id}')">
-                        <div class="report-info">
-                            <h4>${category ? category.name : 'Unknown Category'}</h4>
-                            <p>${report.itemIds.length} items • ${formatCurrency(total)} • ${new Date(report.generatedAt).toLocaleDateString()}</p>
-                        </div>
-                        <div class="report-status status-${report.status}">${report.status.toUpperCase()}</div>
-                    </div>
-                `;
-            }).join('');
+            container.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">Reports feature coming soon</p>';
         }
 
         // Open category detail page
@@ -528,18 +512,16 @@
             const categoryId = document.getElementById('category').value;
             const date = document.getElementById('date').value;
             
-            // Add new expense item
-            const newItem = {
-                id: Date.now().toString(),
+            // Add new expense item using store
+            addExpenseItem({
                 categoryId: categoryId,
                 merchant: merchant,
                 date: date,
                 amountGBP: amount
-            };
+            });
             
-            expenseItems.push(newItem);
-            
-            // Re-render categories
+            // Reload data and re-render
+            loadData();
             renderExpenseCategories();
             
             // Close modal
@@ -551,6 +533,7 @@
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
+            loadData();
             renderExpenseCategories();
             renderExpenseReports();
         });

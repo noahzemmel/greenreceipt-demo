@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vault - Office Expenses Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            min-height: 100vh;
+            color: #0B1F18;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            height: 60px;
+            width: auto;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .demo-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #0B1F18;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .demo-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .demo-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .demo-card h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #0B1F18;
+            margin-bottom: 10px;
+        }
+
+        .demo-card p {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .demo-btn {
+            background: #00A86B;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .demo-btn:hover {
+            background: #008a5a;
+            transform: translateY(-2px);
+        }
+
+        .features-list {
+            background: rgba(0, 168, 107, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .features-list h4 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #0B1F18;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .feature-icon {
+            font-size: 1.2rem;
+        }
+
+        .feature-text {
+            color: #0B1F18;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="vault-logo.svg" alt="Vault Logo">
+            </div>
+            <h1>🔒 Vault</h1>
+            <p>Office Expenses Demo - Complete Flow</p>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="demo-title">Try the Complete Office Expenses Flow</h2>
+            
+            <div class="demo-grid">
+                <div class="demo-card" onclick="window.location.href='office-expenses.html'">
+                    <div class="demo-icon">💼</div>
+                    <h3>Office Expenses</h3>
+                    <p>View your expense categories and monthly totals. Manage your office expenses with organized categories like Work Meals, Train Travel, and more.</p>
+                    <a href="office-expenses.html" class="demo-btn">View Expenses</a>
+                </div>
+
+                <div class="demo-card" onclick="window.location.href='scan.html'">
+                    <div class="demo-icon">📷</div>
+                    <h3>Scan Receipt</h3>
+                    <p>Scan a receipt with our mock camera. The app will automatically parse the merchant, amount, and category, then create an expense request.</p>
+                    <a href="scan.html" class="demo-btn">Scan Receipt</a>
+                </div>
+
+                <div class="demo-card" onclick="window.location.href='requests.html'">
+                    <div class="demo-icon">📋</div>
+                    <h3>Expense Requests</h3>
+                    <p>Track your submitted expense requests by status. View approved, rejected, and pending requests with detailed information and timeline.</p>
+                    <a href="requests.html" class="demo-btn">View Requests</a>
+                </div>
+
+                <div class="demo-card" onclick="window.location.href='notifications.html'">
+                    <div class="demo-icon">🔔</div>
+                    <h3>Notifications</h3>
+                    <p>Stay updated with real-time notifications about your expense requests. Get notified when requests are approved, rejected, or need more information.</p>
+                    <a href="notifications.html" class="demo-btn">View Notifications</a>
+                </div>
+            </div>
+
+            <div class="features-list">
+                <h4>✨ New Features in This Demo</h4>
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">📱</div>
+                        <div class="feature-text">Mock Receipt Scanning</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🤖</div>
+                        <div class="feature-text">Auto OCR Processing</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📝</div>
+                        <div class="feature-text">Expense Request Creation</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📊</div>
+                        <div class="feature-text">Status Tracking</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🔔</div>
+                        <div class="feature-text">Real-time Notifications</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📈</div>
+                        <div class="feature-text">Summary & Insights</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">💾</div>
+                        <div class="feature-text">Local Storage</div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">📄</div>
+                        <div class="feature-text">PDF/CSV Export</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="demo-section">
+            <h2 class="demo-title">How to Test the Flow</h2>
+            <div style="background: rgba(0, 168, 107, 0.05); border-radius: 15px; padding: 25px;">
+                <ol style="color: #0B1F18; line-height: 1.6; padding-left: 20px;">
+                    <li style="margin-bottom: 10px;"><strong>Start with Scanning:</strong> Go to the Scan page and click "Scan Receipt" to simulate scanning a receipt</li>
+                    <li style="margin-bottom: 10px;"><strong>Review & Submit:</strong> The app will show a preview of the parsed receipt. Click "Auto-Submit Expense" to create a request</li>
+                    <li style="margin-bottom: 10px;"><strong>Track Requests:</strong> Go to Requests to see your submitted expense requests with different statuses</li>
+                    <li style="margin-bottom: 10px;"><strong>View Details:</strong> Click on any request to see detailed information, receipt preview, and timeline</li>
+                    <li style="margin-bottom: 10px;"><strong>Check Notifications:</strong> Visit the Notifications page to see real-time updates about your requests</li>
+                    <li style="margin-bottom: 10px;"><strong>Manage Expenses:</strong> Use the Office page to view categorized expenses and monthly summaries</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
