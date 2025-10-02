@@ -1,25 +1,27 @@
 "use client"
 
 import { Navigation } from "@/components/navigation"
-import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { Mail, Phone, MapPin, Clock, Send, CheckCircle, Users, Building, Lightbulb } from "lucide-react"
 import { useState } from "react"
 
 export default function Contact() {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: ""
+    name: '',
+    email: '',
+    company: '',
+    message: ''
   })
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle form submission here
-                    console.log("Form submitted:", formData)
-    alert("Thank you for your message! We&apos;ll get back to you soon.")
-    setFormData({ name: "", email: "", message: "" })
+    // Simulate form submission
+    setIsSubmitted(true)
+    setTimeout(() => setIsSubmitted(false), 3000)
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -34,256 +36,288 @@ export default function Contact() {
       <Navigation />
       
       {/* Hero Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-green-50 to-green-100">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Get in Touch
+      <section className="py-20 bg-gradient-to-br from-green-50 to-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
+            Get in <span className="text-green-600">Touch</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Ready to join the digital receipt revolution? We&apos;d love to hear from you.
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            Ready to revolutionize receipt management? We&apos;d love to hear from you. 
+            Whether you&apos;re a consumer, retailer, or investor, let&apos;s start a conversation.
           </p>
         </div>
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12">
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Contact Form */}
-            <Card className="card-hover">
-              <CardHeader>
-                <CardTitle className="text-2xl">Send us a message</CardTitle>
-                <CardDescription>
-                  Fill out the form below and we&apos;ll get back to you within 24 hours.
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      Full Name
-                    </label>
-                    <Input
-                      id="name"
-                      name="name"
-                      type="text"
-                      required
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="Enter your full name"
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      Email Address
-                    </label>
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter your email address"
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                      Message
-                    </label>
-                    <Textarea
-                      id="message"
-                      name="message"
-                      required
-                      value={formData.message}
-                      onChange={handleChange}
-                      placeholder="Tell us about your interest in Vault..."
-                      rows={6}
-                      className="w-full"
-                    />
-                  </div>
-                  
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
-                  >
-                    Send Message
-                  </Button>
-                </form>
-              </CardContent>
-            </Card>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">Send us a Message</h2>
+              
+              {isSubmitted ? (
+                <Card className="card-hover border-green-200">
+                  <CardContent className="p-8 text-center">
+                    <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Message Sent!</h3>
+                    <p className="text-gray-600">Thank you for reaching out. We&apos;ll get back to you within 24 hours.</p>
+                  </CardContent>
+                </Card>
+              ) : (
+                <Card className="card-hover">
+                  <CardContent className="p-8">
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                      <div>
+                        <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                          Full Name *
+                        </label>
+                        <Input
+                          id="name"
+                          name="name"
+                          type="text"
+                          required
+                          value={formData.name}
+                          onChange={handleChange}
+                          className="w-full"
+                          placeholder="Your full name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                          Email Address *
+                        </label>
+                        <Input
+                          id="email"
+                          name="email"
+                          type="email"
+                          required
+                          value={formData.email}
+                          onChange={handleChange}
+                          className="w-full"
+                          placeholder="your.email@example.com"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-2">
+                          Company (Optional)
+                        </label>
+                        <Input
+                          id="company"
+                          name="company"
+                          type="text"
+                          value={formData.company}
+                          onChange={handleChange}
+                          className="w-full"
+                          placeholder="Your company name"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                          Message *
+                        </label>
+                        <Textarea
+                          id="message"
+                          name="message"
+                          required
+                          value={formData.message}
+                          onChange={handleChange}
+                          className="w-full min-h-[120px]"
+                          placeholder="Tell us about your interest in Vault..."
+                        />
+                      </div>
+                      
+                      <Button type="submit" className="btn-primary w-full">
+                        <Send className="h-5 w-5 mr-2" />
+                        Send Message
+                      </Button>
+                    </form>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
 
             {/* Contact Information */}
-            <div className="space-y-8">
-              <Card className="card-hover">
-                <CardHeader>
-                  <CardTitle className="text-xl">General Inquiries</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">📧</span>
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">Contact Information</h2>
+              
+              <div className="space-y-6 mb-8">
+                <Card className="card-hover">
+                  <CardContent className="p-6">
+                    <div className="flex items-start">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl mr-4">
+                        <Mail className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium">Email</p>
-                        <p className="text-gray-600">hello@vault.app</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Email</h3>
+                        <p className="text-gray-600 mb-1">hello@vault.app</p>
+                        <p className="text-sm text-gray-500">We&apos;ll respond within 24 hours</p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">💼</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">Business Partnerships</p>
-                        <p className="text-gray-600">partnerships@vault.app</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">📰</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">Press & Media</p>
-                        <p className="text-gray-600">press@vault.app</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="card-hover">
-                <CardHeader>
-                  <CardTitle className="text-xl">Office Location</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">📍</span>
+                <Card className="card-hover">
+                  <CardContent className="p-6">
+                    <div className="flex items-start">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl mr-4">
+                        <MapPin className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium">Cambridge, UK</p>
-                        <p className="text-gray-600">Innovation Hub</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Location</h3>
+                        <p className="text-gray-600 mb-1">Cambridge, United Kingdom</p>
+                        <p className="text-sm text-gray-500">Founded at University of Cambridge</p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">🕒</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">Business Hours</p>
-                        <p className="text-gray-600">Mon-Fri, 9AM-6PM GMT</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
 
-              <Card className="card-hover">
-                <CardHeader>
-                  <CardTitle className="text-xl">Follow Us</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">💼</span>
+                <Card className="card-hover">
+                  <CardContent className="p-6">
+                    <div className="flex items-start">
+                      <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-xl mr-4">
+                        <Clock className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium">LinkedIn</p>
-                        <p className="text-gray-600">linkedin.com/company/vault-app</p>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Response Time</h3>
+                        <p className="text-gray-600 mb-1">Within 24 hours</p>
+                        <p className="text-sm text-gray-500">Monday to Friday, 9 AM - 6 PM GMT</p>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">🐦</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">Twitter</p>
-                        <p className="text-gray-600">@vault_app</p>
-                      </div>
-                    </div>
-                    
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                        <span className="text-green-600">📱</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">Instagram</p>
-                        <p className="text-gray-600">@vault_app</p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FAQ Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-4xl mx-auto">
+      {/* Who We Want to Hear From */}
+      <section className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6">
-              Frequently Asked Questions
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Who We Want to Hear From
             </h2>
-            <p className="text-xl text-gray-600">
-              Quick answers to common questions about Vault
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              We&apos;re building Vault for everyone. Here&apos;s who we&apos;d especially love to connect with.
             </p>
           </div>
-          
-          <div className="space-y-8">
-            <Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="card-hover text-center">
               <CardHeader>
-                <CardTitle>How does Vault protect my privacy?</CardTitle>
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-2xl mb-4">
+                  <Users className="h-8 w-8 text-green-600" />
+                </div>
+                <CardTitle className="text-xl font-semibold">Consumers</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Vault uses anonymous device tokens and never collects personal information like email or phone numbers. All receipt data is encrypted and stored securely on your device.
-                </CardDescription>
+                <p className="text-gray-600 mb-4">
+                  Early adopters who want to be part of the digital receipt revolution and help shape our product.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Beta testers</li>
+                  <li>• Feedback providers</li>
+                  <li>• Sustainability advocates</li>
+                </ul>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover text-center">
               <CardHeader>
-                <CardTitle>Is Vault free to use?</CardTitle>
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-2xl mb-4">
+                  <Building className="h-8 w-8 text-green-600" />
+                </div>
+                <CardTitle className="text-xl font-semibold">Retailers</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Yes! Vault offers a free tier for consumers with basic receipt storage and analytics. Premium features include advanced AI insights and unlimited receipt storage.
-                </CardDescription>
+                <p className="text-gray-600 mb-4">
+                  Forward-thinking businesses ready to reduce costs, enhance sustainability, and improve customer experience.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Pilot partners</li>
+                  <li>• Integration discussions</li>
+                  <li>• Sustainability champions</li>
+                </ul>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="card-hover text-center">
               <CardHeader>
-                <CardTitle>How do retailers benefit from Vault?</CardTitle>
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-2xl mb-4">
+                  <Lightbulb className="h-8 w-8 text-green-600" />
+                </div>
+                <CardTitle className="text-xl font-semibold">Investors & Partners</CardTitle>
               </CardHeader>
               <CardContent>
-                <CardDescription>
-                  Retailers save money on printing costs, enhance their sustainability credentials, and gain valuable anonymised insights about customer spending patterns.
-                </CardDescription>
+                <p className="text-gray-600 mb-4">
+                  Visionary investors and strategic partners who share our mission to revolutionize receipt management.
+                </p>
+                <ul className="text-sm text-gray-500 space-y-1">
+                  <li>• Funding opportunities</li>
+                  <li>• Strategic partnerships</li>
+                  <li>• Advisory roles</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-20 bg-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Frequently Asked <span className="text-green-600">Questions</span>
+            </h2>
+            <p className="text-xl text-gray-600">
+              Quick answers to common questions about Vault.
+            </p>
+          </div>
+
+          <div className="space-y-6">
+            <Card className="card-hover">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">When will Vault be available?</h3>
+                <p className="text-gray-600">
+                  We&apos;re currently in development and planning to launch our beta version in early 2025. 
+                  Sign up for early access to be among the first to try Vault.
+                </p>
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>When will Vault be available?</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
-                  We&apos;re currently in beta testing with select retailers and consumers. Public launch is planned for Q2 2024. Sign up for our newsletter to be notified when we launch!
-                </CardDescription>
+            <Card className="card-hover">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">Is my data secure?</h3>
+                <p className="text-gray-600">
+                  Absolutely. We use end-to-end encryption and never share your personal data. 
+                  Our privacy-first approach means no personal information is exchanged at checkout.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="card-hover">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">How do retailers benefit?</h3>
+                <p className="text-gray-600">
+                  Retailers save on printing costs, reduce environmental impact, and gain valuable 
+                  customer insights while improving the checkout experience.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="card-hover">
+              <CardContent className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-3">What makes Vault different?</h3>
+                <p className="text-gray-600">
+                  Vault is the only solution that combines privacy-first design, AI-powered insights, 
+                  and seamless retailer integration in one platform.
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -291,20 +325,20 @@ export default function Contact() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
+      <section className="py-20 bg-gradient-to-r from-green-600 to-green-700 text-white">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6">
             Ready to Get Started?
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Join the waitlist and be among the first to experience the future of receipts.
+          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto">
+            Join the digital receipt revolution. Be part of the solution that&apos;s changing how we handle receipts forever.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="bg-green-600 hover:bg-green-700 text-white px-8 py-4">
-              Join Waitlist
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
+            <Button asChild className="btn-secondary bg-white text-green-700 hover:bg-gray-100 text-xl px-12 py-7">
+              <a href="#contact-form">Get Early Access</a>
             </Button>
-            <Button size="lg" variant="outline" className="px-8 py-4">
-              Schedule Demo
+            <Button asChild variant="outline" className="border-white text-white hover:bg-white hover:text-green-700 text-xl px-12 py-7">
+              <a href="/what-we-do">Learn More</a>
             </Button>
           </div>
         </div>
